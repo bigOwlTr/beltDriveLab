@@ -71,8 +71,8 @@ y_values = predict(mdl, x_values');
 
 h2 = plot(x_values, y_values, 'b:', 'LineWidth', 2);
 
-xlabel('Angle (radians)', 'FontSize', 14, 'FontName', 'Arial');
-ylabel('log(1 / slope)', 'FontSize', 14, 'FontName', 'Arial');
+xlabel('\beta (Radians)', 'FontSize', 14, 'FontName', 'Arial');
+ylabel('log(T_2/T_1)', 'FontSize', 14, 'FontName', 'Arial');
 
 equation_text = sprintf('y = %.2fx + %.2f', mdl.Coefficients.Estimate(2) ...
     , mdl.Coefficients.Estimate(1));
@@ -91,5 +91,45 @@ set(gca, 'FontSize', 12, 'LineWidth', 1.5);
 hold off;
 
 %-------------------------------predicted tension ratio--------------------
-angle = linspace(0, 0, 100);
-tensionRatioPredicted
+theta = linspace(0, 2*pi, 10); 
+
+mu = mdl.Coefficients.Estimate(2);  
+
+tensionRatioPredicted = exp(mu * theta);
+
+tensionTable = table(theta', tensionRatioPredicted', ...
+    'VariableNames', {'theta', 'tensionratio'});
+
+figure('Units', 'centimeters', 'Position', [3, 3, 16, 10]);
+plot(tensionTable.theta, tensionTable.tensionratio, 'LineWidth', 2, ...
+    'Color', 'r', 'DisplayName','Theoretical');
+hold on;
+
+xlabel('\beta (Radians)', 'FontSize', 12);
+ylabel('Tension Ratio (T_2 / T_1)', 'FontSize', 12);
+
+grid on;
+set(gca, 'FontSize', 12, 'LineWidth', 1.5); 
+
+tensionRatio90 = 1/mdl90.Coefficients.Estimate(2);  
+tensionRatio180 = 1/mdl180.Coefficients.Estimate(2);  
+tensionRatio270 = 1/mdl270.Coefficients.Estimate(2);  
+tensionRatio360 = 1/mdl360.Coefficients.Estimate(2);  
+
+anglesDeg = [90, 180, 270, 360];
+anglesRad = deg2rad(anglesDeg); 
+
+
+scatter(anglesRad, [tensionRatio90, tensionRatio180, ...
+    tensionRatio270, tensionRatio360], ...
+    100, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'none', 'Marker', ...
+    '^', 'LineWidth', 1.5, 'DisplayName', 'Experimental');
+
+legend('show', 'FontSize', 12, 'Location', 'northwest');
+grid on;
+hold off;
+
+%--------------------motor efficiency--------------------------------------
+hold on;
+motorTable = 
+
