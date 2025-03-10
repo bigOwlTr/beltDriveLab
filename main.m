@@ -12,13 +12,13 @@ figure('Units', 'centimeters', 'Position', [3, 3, 16, 10]);
 hold on;
 
 
-scatter(data90{:,3}, data90{:,4}, 50, 'b', 'filled', 'DisplayName', ...
+scatter(data90{:,3}, data90{:,4}, 50, 'b', 'DisplayName', ...
     '90° Data', 'Marker', '^');
-scatter(data180{:,3}, data180{:,4}, 50, 'r', 'filled', 'DisplayName', ...
+scatter(data180{:,3}, data180{:,4}, 50, 'r', 'DisplayName', ...
     '180° Data', 'Marker', '^');
-scatter(data270{:,3}, data270{:,4}, 50, 'g', 'filled', 'DisplayName', ...
+scatter(data270{:,3}, data270{:,4}, 50, 'g', 'DisplayName', ...
     '270° Data', 'Marker', '^');
-scatter(data360{:,3}, data360{:,4}, 50, 'k', 'filled', 'DisplayName', ...
+scatter(data360{:,3}, data360{:,4}, 50, 'k', 'DisplayName', ...
     '360° Data', 'Marker', '^');
 
 
@@ -60,8 +60,8 @@ mubeta_values = [mubeta90, mubeta180, mubeta270, mubeta360];
 
 figure('Units', 'centimeters', 'Position', [3, 3, 16, 10]);
 
-h1 = scatter(angles_rad, mubeta_values, 100, 'filled', 'Marker', '^', ...
-    'LineWidth', 2, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'b');
+h1 = scatter(angles_rad, mubeta_values, 100, 'Marker', '^', ...
+    'LineWidth', 2, 'MarkerEdgeColor', 'b');
 
 mdl = fitlm(angles_rad, mubeta_values);
 
@@ -71,8 +71,8 @@ y_values = predict(mdl, x_values');
 
 h2 = plot(x_values, y_values, 'b:', 'LineWidth', 2);
 
-xlabel('\beta (Radians)', 'FontSize', 14, 'FontName', 'Arial');
-ylabel('log(T_2/T_1)', 'FontSize', 14, 'FontName', 'Arial');
+xlabel('\beta (Radians)', 'FontSize', 12);
+ylabel('log(T_2/T_1)', 'FontSize', 12);
 
 equation_text = sprintf('y = %.2fx + %.2f', mdl.Coefficients.Estimate(2) ...
     , mdl.Coefficients.Estimate(1));
@@ -122,7 +122,7 @@ anglesRad = deg2rad(anglesDeg);
 
 scatter(anglesRad, [tensionRatio90, tensionRatio180, ...
     tensionRatio270, tensionRatio360], ...
-    100, 'MarkerEdgeColor', 'b', 'MarkerFaceColor', 'none', 'Marker', ...
+    100, 'b', 'Marker', ...
     '^', 'LineWidth', 1.5, 'DisplayName', 'Experimental');
 
 legend('show', 'FontSize', 12, 'Location', 'northwest');
@@ -130,6 +130,24 @@ grid on;
 hold off;
 
 %--------------------motor efficiency--------------------------------------
-hold on;
-motorTable = 
+figure('Units', 'centimeters', 'Position', [3, 3, 16, 10]);
 
+motorTable = data270(:, 5:12);
+efficiencyTable = table();
+
+efficiencyTable.PowerDraw = motorTable{:, 1} .* motorTable{:, 2}; 
+efficiencyTable.PowerOut = motorTable{:, 4} .* motorTable{:, 6}; 
+
+efficiencyTable.Efficiency = efficiencyTable.PowerOut ./ ... 
+    efficiencyTable.PowerDraw * 100;
+
+efficiencyTable.Torque = motorTable{:, 4};
+
+plot(efficiencyTable.Torque, efficiencyTable.Efficiency, '-^', ...
+    'MarkerSize', 8, 'MarkerEdgeColor', 'r', 'MarkerFaceColor', 'none', ...
+    'LineWidth', 1.5);
+
+xlabel('Torque (Nm)');
+ylabel('Efficiency (%)');
+grid on;
+hold off;
